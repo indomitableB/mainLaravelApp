@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ExampleController;
 use App\Http\Controllers\userController;
+use App\Http\Controllers\PostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,9 +14,17 @@ use App\Http\Controllers\userController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+// User related routes
+Route::get('/', [userController::class, "showCorrectHomepage"])->name('login');
+Route::post('/register', [userController::class, 'register'])->middleware('guest');
+Route::post('/login', [userController::class, 'login'])->middleware('guest');
+Route::post('/logout', [userController::class, 'logout'])->middleware('mustBeLoggedIn');
 
-Route::get('/', [ExampleController::class, "homepage"]);
+// Blog post routes
 
-Route::get('/about', [ExampleController::class, "aboutPage"]);
+Route::get('/create-post', [PostController::class, 'showCreateForm'])->middleware('mustBeLoggedIn');
+Route::post('/create-post', [PostController::class, 'storeNewPost'])->middleware('mustBeLoggedIn');
+Route::get('/post/{post}', [PostController::class, 'viewSinglePost']);
 
-Route::post('/register', [userController::class, 'register']);
+// Profile related routes
+Route::get('/profile/{pisa}',[userController::class, 'profile'])
