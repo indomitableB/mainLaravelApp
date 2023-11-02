@@ -2,13 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 class PostController extends Controller
+
 {
     //
+    public function actuallyUpdate(Post $post, Request $request) {
+        $incomingFields= $request->validate([
+            'title'=>'required',
+            'body'=>'required'
+        ]);
+        $incomingFields['title'] = strip_tags($incomingFields['title']);
+        $incomingFields['body'] = strip_tags($incomingFields['body']);
+        $post->update($incomingFields);
+        return back()->with('success', 'Post successfully updated');
+    }
 
+    public function showEditForm(Post $post) {
+        return view('edit-post', ['post'=>$post]);
+    }
+    public function delete(Post $post) {
+        $post->delete();
+        return redirect('/profile/' . auth()->user()->username)->with('success', 'Post successfully deleted');
+    }
     public function viewSinglePost(Post $post) {
         return view('single-post', ['post'=>$post]);
     }
